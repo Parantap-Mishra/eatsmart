@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Env files (secrets). Commit .env.example only
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+web-build/
+.expo/
+*.apk
+*.aab
+*.ipa
+
+# Python (scraper)
+__pycache__/
+*.pyc
+.venv/
+
+# Logs
+*.log
+npm-debug.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json
