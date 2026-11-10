@@ -12,20 +12,37 @@
 
 ## Done
 - 2026-11-10: Project set up: Expo app in `mobile/`, CLAUDE.md, PLAN.md, README, public GitHub repo.
+- 2026-11-10: Researched UIUC menu data. Two sources found, both working (see "UIUC data sources" below).
+
+## UIUC data sources
+**1. Menus + hours: `web.housing.illinois.edu/diningmenus`** (UIUC's own site, JSON API)
+- `POST https://web.housing.illinois.edu/DiningMenus/api/DiningMenu/GetOption/` with JSON `{"DiningOptionID": 3, "mealDate": "2026-11-10"}`, which returns a JSON array of menu items.
+- Item fields: `FormalName`, `Meal` (Breakfast/Lunch/Dinner/Light Lunch/Kosher...), `ServingUnit` (station, e.g. Grillworks), `Course`, `Traits` (allergens + Vegan/Vegetarian/Halal, comma-separated), `ItemID`.
+- Hall IDs: Ikenberry 1, PAR 2, ISR 3, Lincoln/Allen 5. Retail: Corner Cafe 6, 57 North 7, Caffeinator 9, Urbana South Market 14, TerraByte 18, InfiniTEA 30, Food Truck 31/32, Everybody Eats 35/36.
+- Hours: an HTML table `#sTable` in the page itself (hall ID, date, meal, start and end times).
+- **No calories or macros here.**
+
+**2. Nutrition: CBORD NetNutrition at `eatsmart.housing.illinois.edu/NetNutrition/46`** (HTML, session-based)
+- Full label per item: serving size, calories, fat, sat fat, carbs, fiber, sugar, protein, sodium, ingredients, allergens.
+- Flow (server keeps state in the `CBORD.netnutrition2` cookie): GET home, then POST `Unit/SelectUnitFromUnitsList` `{unitOid}` (hall), then `Unit/SelectUnitFromChildUnitsList` (station), then `Menu/SelectMenu` `{menuOid}` (date + meal), and the rows hold `detailOid`s. Then POST `NutritionDetail/ShowItemNutritionLabel` `{detailOid, menuOid}`, which returns HTML to parse.
+- Unit IDs: Ike 1, ISR 11, PAR 22, LAR 29 (each has child units per station, e.g. ISR Grillworks 15).
+- Menus are published about 3 weeks ahead.
+- HTTP only (no HTTPS). No robots.txt on either host.
+
+**Plan:** use source 1 for what's served where and when, source 2 for nutrition. Match them by item name. Nutrition for an item rarely changes, so cache it per item and only fetch labels for items not seen before. That's a handful of requests per day after the first run.
 
 ## Next
-1. Find out how UIUC publishes dining menus and nutrition data (vendor, endpoints, scraping rules).
-2. Menu scraper prototype: pull one day of menus for all halls into JSON.
-3. Set up Supabase: schema for halls, menu items, nutrition and daily menus. The scraper writes to it daily via GitHub Actions.
-4. App: browse today's menu by hall.
-5. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
-6. App: daily recommender, split per meal ("Lunch at ISR: 1.5 servings grilled chicken, 1 cup rice, ~45g protein"). Picks the open hall that best hits the targets. If several are close, show them as options to choose from. Portions in servings, not grams. Respects dietary restrictions. Unit tests.
-7. App: enter meal plan by hand (swipes and dining dollars left), then budget-aware suggestions.
-8. Later: "I'm at this hall no matter what, what do I eat?" mode. The user picks the hall and the app gives the best meal there.
-9. Later: off-plan logging. The user logs what they actually ate when they didn't follow the plan, and it counts toward the day's calories and macros (the remaining meals adjust).
-10. Later: learn real maintenance over time from "I ate this" logs plus weekly weigh-ins, like MacroFactor.
-11. Later: health guardrails (calorie floor, no extreme deficits, no shame-based wording).
-12. Later: pick the final app name (EatSmart is a placeholder) and rename the app, repo and store listing.
+1. Menu scraper prototype: pull one day of menus for all 4 dining halls (source 1) plus nutrition (source 2), joined, into JSON.
+2. Set up Supabase: schema for halls, menu items, nutrition and daily menus. The scraper writes to it daily via GitHub Actions.
+3. App: browse today's menu by hall.
+4. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
+5. App: daily recommender, split per meal ("Lunch at ISR: 1.5 servings grilled chicken, 1 cup rice, ~45g protein"). Picks the open hall that best hits the targets. If several are close, show them as options to choose from. Portions in servings, not grams. Respects dietary restrictions. Unit tests.
+6. App: enter meal plan by hand (swipes and dining dollars left), then budget-aware suggestions.
+7. Later: "I'm at this hall no matter what, what do I eat?" mode. The user picks the hall and the app gives the best meal there.
+8. Later: off-plan logging. The user logs what they actually ate when they didn't follow the plan, and it counts toward the day's calories and macros (the remaining meals adjust).
+9. Later: learn real maintenance over time from "I ate this" logs plus weekly weigh-ins, like MacroFactor.
+10. Later: health guardrails (calorie floor, no extreme deficits, no shame-based wording).
+11. Later: pick the final app name. EatSmart is a placeholder, and UIUC's own nutrition site is already called "EatSmart", so we can't keep it and rename the app, repo and store listing.
 
 ## Decisions
 - 2026-11-10: **Expo (React Native + TypeScript)** for the app. One codebase for Android and iOS, I can test on my Android phone with Expo Go, and EAS can build for both stores without a Mac. *Alternatives:* Flutter (would mean learning Dart), native Kotlin and Swift (two codebases).
