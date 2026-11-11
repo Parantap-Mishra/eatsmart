@@ -1,0 +1,3 @@
+# Scraped data stays local for now (moves to Supabase later)
+output/
+cache/

@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!--STARTHEAD-->
+<head>
+    <title>Dining Menus - University Housing</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.brand.illinois.edu/components/il-header.css">
+    <script type="module" async src="https://cdn.brand.illinois.edu/components/il-header.mjs"></script>
+
+    <link rel="stylesheet" href="https://cdn.brand.illinois.edu/components/il-footer.css">
+    <script type="module" async src="https://cdn.brand.illinois.edu/components/il-footer.mjs"></script>
+
+    <link rel="stylesheet" href="https://cdn.toolkit.illinois.edu/3/toolkit.css">
+    <script type="module" src="https://cdn.toolkit.illinois.edu/3/toolkit.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.toolkit.illinois.edu/ilw-icon/1.1.0/ilw-icon.css">
+    <script type="module" src="https://cdn.toolkit.illinois.edu/ilw-icon/1.1.0/ilw-icon.js"></script>
+
+
+    <link href="https://web.housing.illinois.edu/SiteBase/css/app-toolkit.css" rel="stylesheet">
+    <script src="https://web.housing.illinois.edu/SiteBase/js/app-toolkit.js"></script>
+
+    <script src="https://web.housing.illinois.edu/SiteBase/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://web.housing.illinois.edu/SiteBase/lib/moment.js/moment.js"></script>
+    <script src="https://web.housing.illinois.edu/SiteBase/lib/datatables/js/jquery.dataTables.js"></script>
+    <script src="https://web.housing.illinois.edu/SiteBase/datatables-responsive/datatables.responsive.min.js"></script>
+    <link href="https://web.housing.illinois.edu/SiteBase/css/siteglobal.css" rel="stylesheet">
+</head>
+
+
+
+<body>
+   
+    <ilw-page class="ilw-font">
+        <!--STARTHEADER-->
+        <!--STARTHEADER-->
+        <il-header b-17de90droe slot="header">
+            <a b-17de90droe slot="primary-unit" href="https://studentaffairs.illinois.edu">Student Affairs</a>
+            <a b-17de90droe slot="site-name" href="https://housing.illinois.edu">University Housing</a>
+
+            <il-header-nav b-17de90droe slot="navigation">
+                
+
+    <!-- THIS IS FOR DYNAMIC MENU CONSTRUCTION-->
+
+<!-- THIS IS FOR STATIC MENU CONSTRUCTION-->
+
+            </il-header-nav>
+        </il-header>
+        
+        <!--ENDHEADER-->
+
+
+
+        <ilw-content width="page">
+
+            <main role="main" style="min-height:600px;">
+                
+<div class="masthead" style="padding-top:15px;padding-bottom:15px;">
+    <div class="il-formatted">
+        <h1>Dining Menus</h1>
+    </div>
+</div>
+
+    <p>
+        The Illinois App puts your food at your fingertips! Get menus, <a href="http://eatsmart.housing.illinois.edu/NetNutrition/46">nutrition and allergen information</a>,
+        dining hall hours and meal plan balances: <a href="https://apps.apple.com/us/app/illinois/id1476075513">iPhone App</a> |
+        <a href="https://play.google.com/store/apps/details?id=edu.illinois.rokwire">Android App</a>
+    </p>
+
+                <div class="row" width="page" >
+
+                    <label class="sa-col-6 sa-col-xs-4 sa-col-s-3 sa-col-l-2">All-You-Care-To-Eat:</label>
+                    <div class="sa-col-6 sa-col-xs-4 sa-col-s-5 sa-col-2">
+                        <select id="dineop">
+                        <option value="0" id="0">(Select Location)</option>
+                        <option value="Ikenberry Dining Center" id="1">Ikenberry Dining Center</option>
+                        <option value="ISR Dining Center" id="3">ISR Dining Center</option>
+                        <option value="Lincoln/Allen Dining Hall" id="5">Lincoln/Allen Dining Hall</option>
+                        <option value="PAR Dining Hall" id="2">PAR Dining Hall</option>
+                    </select>
+                    </div>
+                </div>
+
+                <div class="row" width="page">
+                    <label class="sa-col-6 sa-col-xs-4 sa-col-s-3 sa-col-l-2">Retail Locations:</label>
+                    <div class="sa-col-6 sa-col-xs-4 sa-col-s-5 sa-col-2">      
+                        <select id="retailop">
+                            <option value="0" id="0">(Select Location)</option>
+                            <option value="Corner Cafe" id="6">Corner Cafe</option>
+                            <option value="57 North" id="7">57 North</option>
+                            <option value="Caffeinator" id="9">Caffeinator</option>
+                            <option value="Urbana South Market" id="14">Urbana South Market</option>
+                            <option value="TerraByte" id="18">TerraByte</option>
+                            <option value="InfiniTEA" id="30">InfiniTEA</option>
+                            <option value="Dinin&#x27; Illini Food Truck" id="31">Dinin&#x27; Illini Food Truck</option>
+                            <option value="Dinin&#x27; Illini Food Truck" id="32">Dinin&#x27; Illini Food Truck</option>
+                            <option value="Everybody Eats" id="35">Everybody Eats</option>
+                            <option value="Everybody Eats" id="36">Everybody Eats</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row" width="page">
+
+                    <label class="sa-col-6 sa-col-xs-4 sa-col-s-3 sa-col-l-2">Serving Date:</label>
+                    <div class="sa-col-6 sa-col-xs-4 sa-col-s-5 sa-col-2">
+                        <input type="date" id="mealdate" />
+                    </div>
+                </div>
+                <br />
+                <div>
+                    <input class="ila-button ila-pri-button-blue view" type="button" value="View" style="float:left;" />
+                </div>
+                <br /><br /><br />
+
+
+        <br />
+        <div style="display:none;">
+            <table id="sTable">
+                <thead>
+                    <tr>
+                        <th>DiningOptionID</th>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Time Period</th>
+                        <th>Start24</th>
+                        <th>End24</th>
+                        <th>Start</th>
+                        <th>End</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:00</td>
+                        <td>10:30 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Kosher Lunch</td>
+                        <td>10:45</td>
+                        <td>13:30</td>
+                        <td>10:45 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Kosher Dinner</td>
+                        <td>16:45</td>
+                        <td>18:15</td>
+                        <td>4:45 PM</td>
+                        <td>6:15 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Field of Greens</td>
+                        <td>10:30</td>
+                        <td>15:00</td>
+                        <td>10:30 AM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>23:00</td>
+                        <td>7:00 AM</td>
+                        <td>11:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>18:00</td>
+                        <td>7:00 AM</td>
+                        <td>6:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Light Lunch</td>
+                        <td>13:30</td>
+                        <td>15:00</td>
+                        <td>1:30 PM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-10</td>
+                        <td>Tuesday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>18:00</td>
+                        <td>7:00 AM</td>
+                        <td>6:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Light Lunch</td>
+                        <td>13:30</td>
+                        <td>15:00</td>
+                        <td>1:30 PM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Kosher Lunch</td>
+                        <td>10:45</td>
+                        <td>13:30</td>
+                        <td>10:45 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:00</td>
+                        <td>10:30 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>11:00</td>
+                        <td>14:00</td>
+                        <td>11:00 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Field of Greens</td>
+                        <td>10:30</td>
+                        <td>15:00</td>
+                        <td>10:30 AM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Kosher Dinner</td>
+                        <td>16:45</td>
+                        <td>18:15</td>
+                        <td>4:45 PM</td>
+                        <td>6:15 PM</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>2026-11-11</td>
+                        <td>Wednesday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>23:00</td>
+                        <td>7:00 AM</td>
+                        <td>11:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Kosher Lunch</td>
+                        <td>10:45</td>
+                        <td>13:30</td>
+                        <td>10:45 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Field of Greens</td>
+                        <td>10:30</td>
+                        <td>15:00</td>
+                        <td>10:30 AM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>18:00</td>
+                        <td>7:00 AM</td>
+                        <td>6:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Kosher Dinner</td>
+                        <td>16:45</td>
+                        <td>18:15</td>
+                        <td>4:45 PM</td>
+                        <td>6:15 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:00</td>
+                        <td>10:30 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>11:00</td>
+                        <td>14:00</td>
+                        <td>11:00 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Light Lunch</td>
+                        <td>13:30</td>
+                        <td>15:00</td>
+                        <td>1:30 PM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>2026-11-12</td>
+                        <td>Thursday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>23:00</td>
+                        <td>7:00 AM</td>
+                        <td>11:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>18:00</td>
+                        <td>7:00 AM</td>
+                        <td>6:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:00</td>
+                        <td>10:30 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Field of Greens</td>
+                        <td>10:30</td>
+                        <td>15:00</td>
+                        <td>10:30 AM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Light Lunch</td>
+                        <td>13:30</td>
+                        <td>15:00</td>
+                        <td>1:30 PM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-13</td>
+                        <td>Friday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Lunch</td>
+                        <td>10:00</td>
+                        <td>14:00</td>
+                        <td>10:00 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Continental Breakfast</td>
+                        <td>9:00</td>
+                        <td>10:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Lunch</td>
+                        <td>10:00</td>
+                        <td>14:00</td>
+                        <td>10:00 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Continental Breakfast</td>
+                        <td>9:00</td>
+                        <td>10:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-14</td>
+                        <td>Saturday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Lunch</td>
+                        <td>10:00</td>
+                        <td>14:00</td>
+                        <td>10:00 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Continental Breakfast</td>
+                        <td>9:00</td>
+                        <td>10:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Lunch</td>
+                        <td>10:00</td>
+                        <td>14:00</td>
+                        <td>10:00 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Continental Breakfast</td>
+                        <td>9:00</td>
+                        <td>10:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>18:00</td>
+                        <td>7:00 AM</td>
+                        <td>6:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Kosher Dinner</td>
+                        <td>16:45</td>
+                        <td>18:15</td>
+                        <td>4:45 PM</td>
+                        <td>6:15 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Daily Menu</td>
+                        <td>12:00</td>
+                        <td>23:00</td>
+                        <td>12:00 PM</td>
+                        <td>11:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-15</td>
+                        <td>Sunday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>19:00</td>
+                        <td>4:30 PM</td>
+                        <td>7:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Kosher Dinner</td>
+                        <td>16:45</td>
+                        <td>18:15</td>
+                        <td>4:45 PM</td>
+                        <td>6:15 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Kosher Lunch</td>
+                        <td>10:45</td>
+                        <td>13:30</td>
+                        <td>10:45 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Field of Greens</td>
+                        <td>10:30</td>
+                        <td>15:00</td>
+                        <td>10:30 AM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>18:00</td>
+                        <td>7:00 AM</td>
+                        <td>6:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:00</td>
+                        <td>10:30 AM</td>
+                        <td>2:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>9:00</td>
+                        <td>22:00</td>
+                        <td>9:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Breakfast</td>
+                        <td>7:00</td>
+                        <td>10:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>13:30</td>
+                        <td>10:30 AM</td>
+                        <td>1:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Light Lunch</td>
+                        <td>13:30</td>
+                        <td>15:00</td>
+                        <td>1:30 PM</td>
+                        <td>3:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>10:00</td>
+                        <td>22:00</td>
+                        <td>10:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Retail Offerings</td>
+                        <td>22:00</td>
+                        <td>0:00</td>
+                        <td>10:00 PM</td>
+                        <td>12:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>23:00</td>
+                        <td>7:00 AM</td>
+                        <td>11:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Dinner</td>
+                        <td>16:30</td>
+                        <td>20:00</td>
+                        <td>4:30 PM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Lunch</td>
+                        <td>10:30</td>
+                        <td>14:30</td>
+                        <td>10:30 AM</td>
+                        <td>2:30 PM</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>7:00</td>
+                        <td>22:00</td>
+                        <td>7:00 AM</td>
+                        <td>10:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>2026-11-16</td>
+                        <td>Monday</td>
+                        <td>Daily Menu</td>
+                        <td>10:30</td>
+                        <td>20:00</td>
+                        <td>10:30 AM</td>
+                        <td>8:00 PM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="noData" class="il-formatted" style="display:none;">
+        <h3>No Data To Display</h3>
+    </div>
+    <div id="menuData">
+        <h2 id="resTitle" style="display:none;"><span id="optionlbl"></span></h2>
+        <p></p>
+        <div id="lschedule" class="widget-mybalances" style="display:none;">
+            <div id="scheduleText" class="widget-inner">
+
+            </div>
+            <div id="week" class="widget-inner" style="display:none;">
+
+            </div>
+        </div>
+        <div class="container" id="results" style="display:none;">
+            <table id="dTable">
+                <thead>
+                    <tr>
+                        <th>EventDate</th>
+                        <th>DiningMenuID</th>
+                        <th>Serving Unit</th>
+                        <th>Course</th>
+                        <th>CourseSort</th>
+                        <th>Name</th>
+                        <th>Meal</th>
+                        <th>Traits</th>
+                        <th>DiningOptionID</th>
+                        <th>ScheduleID</th>
+                        <th>ItemID</th>
+                        <th>Category</th>
+                        <th>EventDateGMT</th>
+                        <th>Meal Order</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+<style>
+    th {
+        text-align: center;
+    }
+
+    td {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    #dTable {
+        width: 100%;
+    }
+
+    .btn-primary {
+        background-color: #fff;
+        border: 0.125rem solid var(--il-orange);
+    }
+
+    input[type=date]::-webkit-calendar-picker-indicator {
+        color: var(--il-orange);
+    }
+
+    .card-header {
+        padding: 5px;
+        color: white;
+        background-color: var(--il-blue);
+    }
+
+    .card-body {
+        padding: 5px;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+
+    label {
+        margin-bottom: 0;
+    }
+
+    .caret {
+        color: var(--il-orange);
+    }
+
+
+</style>
+            </main>
+        </ilw-content>
+
+
+
+
+        <!--STARTFOOTER-->
+        <!--STARTFOOTER-->
+        <ilw-footer b-17de90droe slot="footer">
+            <a b-17de90droe slot="primary-unit" href="https://studentaffairs.illinois.edu">Student Affairs</a>
+            <a b-17de90droe slot="site-name" href="https://housing.illinois.edu">University Housing</a>
+            <nav slot="social" aria-label="Social media">
+    <ul>
+        <li><a data-service="instagram" href="http://instagram.com/illinihousing">Instagram</a></li>
+        <li><a data-service="facebook" href="https://www.facebook.com/illinihousing">Facebook</a></li>
+        <li><a data-service="youtube" href="https://www.youtube.com/channel/UCTfboue7_GNLA4bB78O69fw">YouTube</a></li>
+        <li><a data-service="linkedin" href="https://www.linkedin.com/in/university-housing-illinois-73833b250/">linkedin</a></li>
+    </ul>
+</nav>
+<address slot="address">
+    <p>
+        Housing Information Office
+    </p>
+    <p>University of Illinois Urbana-Champaign</p>
+    <p>
+        100 Clark Hall,
+        1203 South Fourth Street
+        Champaign, IL  61820
+    </p>
+    <p><a href="tel:217-333-7111">217-333-7111</a></p>
+    <p>Email: <a href="mailto:housing@illinois.edu">housing@illinois.edu</a></p>
+    <div class="footer-colleges">
+    </div>
+</address>
+
+            <div b-17de90droe id="google_translate_element"></div>
+            <script>
+                function googleTranslateElementInit() {
+                  new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                  }, 'google_translate_element');
+                }
+            </script>
+            <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+        </ilw-footer>
+        
+        <!--ENDFOOTER-->
+    </ilw-page>
+
+
+
+     <link rel="stylesheet" href="/diningmenus/css/site.css?v=8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U" />
+    <script src="/diningmenus/js/diningOptions.js?v=Ur2atXr6_UtSipM01DozM1z9iuwiq8L_CHFn53l-Z38"></script>
+    
+</body>
+</html>

@@ -10,7 +10,8 @@
 - Install: `cd mobile && npm install`
 - Run: `cd mobile && npx expo start`, then scan the QR code with Expo Go on Android (or press `a` for an emulator)
 - Lint and typecheck: `cd mobile && npx expo lint && npx tsc --noEmit`
-- Test: not set up yet (add jest-expo with the first logic module)
+- Test (app): not set up yet (add jest-expo with the first logic module)
+- Scraper: `cd scraper && npm install`, then `npm run scrape` (writes `output/menu-YYYY-MM-DD.json`), `npm test`, `npm run typecheck`
 - Expo-specific guidance lives in `mobile/AGENTS.md`. Follow it, and check the docs for the installed SDK version instead of relying on memory.
 
 ## My preferences
@@ -25,6 +26,6 @@
 - Commit and push when something works and I've tried it.
 - Never commit secrets, `.env` files or build output. Never force-push.
 - The app bundle is public. Secret keys live only on the backend or scraper, never in `mobile/`. Only public keys (like the Supabase anon key) go in the app, through `EXPO_PUBLIC_` env vars.
-- Scraping: pull UIUC menus at most once a day on a schedule, cache them in the database, and rate-limit requests. The app never scrapes directly.
+- Scraping: pull UIUC menus at most once a day on a schedule, cache them in the database, and rate-limit requests. The app never scrapes directly. The scraper uses an honest User-Agent and never spoofs a browser or gets around blocks.
 - Nutrition math and the meal recommender must have unit tests. UI tests are optional.
 - Keep this file short. Progress, decisions and problems go in PLAN.md.
