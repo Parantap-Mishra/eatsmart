@@ -8,14 +8,14 @@ import { fileURLToPath } from 'node:url';
 import { HALLS, HOURS_PAGE, NETNUTRITION_BASE } from './config.js';
 import { PoliteSession } from './http.js';
 import {
-  normalizeName, parseChildUnits, parseHours, parseLabel, parseMenuItems, parseMenuList, parsePanels,
+  MissingNutritionError, normalizeName, parseChildUnits, parseHours, parseLabel, parseMenuItems, parseMenuList, parsePanels,
   type HoursRow,
 } from './parse.js';
-import type { DayMenu, HallMenu, MealPeriod, Nutrition } from './types.js';
+import { splitMeals } from './shape.js';
+import type { DayMenu, HallMenu, MenuItem, Nutrition } from './types.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_FILE = join(ROOT, 'cache', 'nutrition.json');
-const MEAL_ORDER = ['Breakfast', 'Lunch', 'Light Lunch', 'Dinner'];
 
 function todayInChampaign(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
@@ -53,7 +53,7 @@ async function main() {
 
   const halls: HallMenu[] = [];
   for (const hall of HALLS) {
-    const meals = new Map<string, MealPeriod>();
+    const menusByName = new Map<string, MenuItem[]>();
     const stations = parseChildUnits((await nn('Unit/SelectUnitFromUnitsList', { unitOid: hall.nnUnitOid })).childUnitsPanel ?? '');
     if (!stations.length) throw new Error(`No stations found for ${hall.name}. Did the site change?`);
 
@@ -71,14 +71,12 @@ async function main() {
               nutrition = cache[key] = parseLabel(html);
               labelsFetched++;
             } catch (err) {
-              console.warn(`  ! no nutrition for "${row.name}": ${(err as Error).message}`);
+              if (err instanceof MissingNutritionError) console.log(`  - "${row.name}": ${err.message}`);
+              else console.warn(`  ! no nutrition for "${row.name}": ${(err as Error).message}`);
             }
           }
-          if (!meals.has(meal)) {
-            const h = hours.find((x) => x.hoursId === hall.hoursId && x.meal === meal);
-            meals.set(meal, { meal, start: h?.start ?? null, end: h?.end ?? null, items: [] });
-          }
-          meals.get(meal)!.items.push({
+          if (!menusByName.has(meal)) menusByName.set(meal, []);
+          menusByName.get(meal)!.push({
             name: row.name, station: station.name, course: row.course,
             servingSize: row.servingSize, traits: row.traits, nutrition,
           });
@@ -87,11 +85,12 @@ async function main() {
     }
     saveJson(CACHE_FILE, cache); // save progress after every hall
 
-    const sorted = [...meals.values()].sort((a, b) => rank(a.meal) - rank(b.meal));
-    halls.push({ id: hall.id, name: hall.name, meals: sorted });
-    const items = sorted.flatMap((m) => m.items);
+    const { meals, allDay, usedFallback } = splitMeals(menusByName, hours.filter((h) => h.hoursId === hall.hoursId));
+    if (usedFallback) console.warn(`  ! no hours for ${hall.name}; guessed all-day items by station name`);
+    halls.push({ id: hall.id, name: hall.name, meals, allDay });
+    const items = [...meals, ...allDay].flatMap((m) => m.items);
     const withNutrition = items.filter((i) => i.nutrition).length;
-    console.log(`  ${hall.name}: ${items.length} items across ${sorted.map((m) => m.meal).join(', ') || 'no meals'} (${withNutrition}/${items.length} with nutrition)`);
+    console.log(`  ${hall.name}: ${meals.map((m) => `${m.meal} ${m.items.length}`).join(', ') || 'no meals'}, all-day ${allDay.reduce((n, s) => n + s.items.length, 0)} (${withNutrition}/${items.length} with nutrition)`);
   }
 
   const out: DayMenu = { date, scrapedAt: new Date().toISOString(), source: NETNUTRITION_BASE, halls };
@@ -101,11 +100,6 @@ async function main() {
   const secs = Math.round((Date.now() - started) / 1000);
   console.log(`\nDone in ${secs}s, ${session.requestCount} requests. Labels: ${labelsFetched} fetched, ${labelsCached} from cache.`);
   console.log(`Wrote ${file}`);
-}
-
-function rank(meal: string) {
-  const i = MEAL_ORDER.indexOf(meal);
-  return i === -1 ? 99 : i;
 }
 
 main().catch((err) => {

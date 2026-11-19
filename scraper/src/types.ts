@@ -30,10 +30,17 @@ export interface MealPeriod {
   items: MenuItem[];
 }
 
+/** Items served whenever the hall is open (Salad Bar, Cereal, Deli & Bagel Bar...). */
+export interface AllDaySection {
+  section: string;
+  items: MenuItem[];
+}
+
 export interface HallMenu {
   id: string; // our slug, e.g. "isr"
   name: string;
-  meals: MealPeriod[];
+  meals: MealPeriod[]; // real meal periods, each with hours
+  allDay: AllDaySection[];
 }
 
 export interface DayMenu {

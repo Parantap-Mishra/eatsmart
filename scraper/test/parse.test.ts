@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   formatDateHeader, normalizeName, parseChildUnits, parseHours, parseLabel, parseMenuItems, parseMenuList,
-  parsePanels, SiteChangedError,
+  MissingNutritionError, parsePanels, SiteChangedError,
 } from '../src/parse.js';
 
 // Real responses saved from UIUC on 2026-11-10.
@@ -83,8 +83,11 @@ describe('parseLabel', () => {
     expect(n.protein).toBe(0.5);
     expect(n.sugars).toBeNull();
   });
-  it('throws if the label has no calories', () => {
+  it('throws SiteChangedError if the page is not a nutrition label', () => {
     expect(() => parseLabel('<div>Something else</div>')).toThrow(SiteChangedError);
+  });
+  it('throws MissingNutritionError if the label exists but has no calories', () => {
+    expect(() => parseLabel('<div>Nutrition Information Serving Size: 1 each Amount Per Serving Calories NA</div>')).toThrow(MissingNutritionError);
   });
 });
 

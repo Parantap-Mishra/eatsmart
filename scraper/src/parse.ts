@@ -14,6 +14,14 @@ export class SiteChangedError extends Error {
   }
 }
 
+/** The label page is fine, UIUC just didn't enter nutrition for this item. */
+export class MissingNutritionError extends Error {
+  constructor() {
+    super('UIUC has no calorie data for this item');
+    this.name = 'MissingNutritionError';
+  }
+}
+
 /** NetNutrition AJAX responses look like {success, panels: [{id, html}]}. */
 export function parsePanels(json: string): Record<string, string> {
   if (/Start-up Error/i.test(json)) throw new SiteChangedError('NetNutrition returned its start-up error page');
@@ -103,9 +111,8 @@ function num(raw: string | undefined): number | null {
 /** Nutrition label HTML -> numbers. */
 export function parseLabel(html: string): Nutrition {
   const text = cheerio.load(html).text().replace(/ /g, ' ').replace(/\s+/g, ' ');
-  if (!/Nutrition Information/i.test(text) || !/Calories/.test(text)) {
-    throw new SiteChangedError('nutrition label has no calories');
-  }
+  if (!/Nutrition Information/i.test(text)) throw new SiteChangedError('nutrition label page not recognized');
+  if (!/Calories\s+\d/.test(text)) throw new MissingNutritionError();
   const grab = (label: string) => new RegExp(`${label}\\s+(<?\\s*[\\d.]+|NA)`).exec(text)?.[1];
   const servingSize = /Serving Size:\s*(.*?)\s*Amount Per Serving/.exec(text)?.[1]?.trim() ?? '';
   const grams = /\((\d+(?:\.\d+)?)\s*g\)/.exec(servingSize)?.[1];

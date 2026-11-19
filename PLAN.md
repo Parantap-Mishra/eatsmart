@@ -14,6 +14,7 @@
 - 2026-11-10: Project set up: Expo app in `mobile/`, CLAUDE.md, PLAN.md, README, public GitHub repo.
 - 2026-11-10: Researched UIUC menu data. Two sources found, both working (see "UIUC data sources" below).
 - 2026-11-10: Scraper prototype (`scraper/`). `npm run scrape` writes today's menus for all 4 halls with nutrition to `output/menu-YYYY-MM-DD.json`. First run: 1,136 items, 1,135 with nutrition, 521 requests, ~9 min. Later runs reuse the cache. 16 parser tests.
+- 2026-11-19: Scraper cleanup: each hall now has real `meals` (with hours) plus an `allDay` list (Salad Bar, Cereal, Deli & Bagel Bar...). Live run on 2026-11-19: ~4.5 min, 148 new labels, 951 from cache. 21 tests.
 
 ## UIUC data sources
 **1. Menus + hours: `web.housing.illinois.edu/diningmenus`** (UIUC's own site, JSON API)
@@ -33,17 +34,16 @@
 **What we actually use (2026-11-10):** NetNutrition (source 2) for everything: halls, stations, meals, items, allergen and diet tags, serving sizes and nutrition. The UIUC page (source 1) is used only for the hours table. Source 1's menu API returns an empty response to non-browser clients, and we don't fake a browser (see Decisions). Nutrition labels are cached by item name + serving size, so repeat items cost no requests.
 
 ## Next
-1. Scraper cleanup: "Build Your Own" station items (Salad Bar, Cereal, Deli & Bagel Bar, Beverages...) show up as fake "meals" with no hours. Make them "available all day" items instead.
-2. Set up Supabase: schema for halls, menu items, nutrition and daily menus. The scraper writes to it daily via GitHub Actions.
-3. App: browse today's menu by hall.
-4. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
-5. App: daily recommender, split per meal ("Lunch at ISR: 1.5 servings grilled chicken, 1 cup rice, ~45g protein"). Picks the open hall that best hits the targets. If several are close, show them as options to choose from. Portions in servings, not grams. Respects dietary restrictions. Unit tests.
-6. App: enter meal plan by hand (swipes and dining dollars left), then budget-aware suggestions.
-7. Later: "I'm at this hall no matter what, what do I eat?" mode. The user picks the hall and the app gives the best meal there.
-8. Later: off-plan logging. The user logs what they actually ate when they didn't follow the plan, and it counts toward the day's calories and macros (the remaining meals adjust).
-9. Later: learn real maintenance over time from "I ate this" logs plus weekly weigh-ins, like MacroFactor.
-10. Later: health guardrails (calorie floor, no extreme deficits, no shame-based wording).
-11. Later: pick the final app name, then rename the app, repo and store listing. EatSmart is a placeholder, and UIUC's own nutrition site is already called "EatSmart", so we can't keep it.
+1. Set up Supabase: schema for halls, menu items, nutrition and daily menus. The scraper writes to it daily via GitHub Actions.
+2. App: browse today's menu by hall.
+3. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
+4. App: daily recommender, split per meal ("Lunch at ISR: 1.5 servings grilled chicken, 1 cup rice, ~45g protein"). Picks the open hall that best hits the targets. If several are close, show them as options to choose from. Portions in servings, not grams. Respects dietary restrictions. Unit tests.
+5. App: enter meal plan by hand (swipes and dining dollars left), then budget-aware suggestions.
+6. Later: "I'm at this hall no matter what, what do I eat?" mode. The user picks the hall and the app gives the best meal there.
+7. Later: off-plan logging. The user logs what they actually ate when they didn't follow the plan, and it counts toward the day's calories and macros (the remaining meals adjust).
+8. Later: learn real maintenance over time from "I ate this" logs plus weekly weigh-ins, like MacroFactor.
+9. Later: health guardrails (calorie floor, no extreme deficits, no shame-based wording).
+10. Later: pick the final app name, then rename the app, repo and store listing. EatSmart is a placeholder, and UIUC's own nutrition site is already called "EatSmart", so we can't keep it.
 
 ## Decisions
 - 2026-11-10: **Expo (React Native + TypeScript)** for the app. One codebase for Android and iOS, I can test on my Android phone with Expo Go, and EAS can build for both stores without a Mac. *Alternatives:* Flutter (would mean learning Dart), native Kotlin and Swift (two codebases).
@@ -60,10 +60,12 @@
 - 2026-11-10: **Public repo** on GitHub, commits use the GitHub noreply email.
 - 2026-11-10: **Scraper in TypeScript** (Node + cheerio, tsx, vitest). Same language as the app, so types can be shared later. *Alternative:* Python (requests + BeautifulSoup), which would add a second toolchain.
 - 2026-11-10: **Scraper identifies itself honestly** (`EatSmartScraper/0.1` User-Agent with the repo link), waits 1s between requests, and is cached. It never spoofs a browser. If a source blocks non-browser clients, we treat that as "not allowed" and use a different source. *Alternative:* faking a browser User-Agent (works, but it's evading their filter).
+- 2026-11-19: **Real meals vs all-day items:** a menu is a real meal only if UIUC's hours table lists it for that hall. Everything else (Salad Bar, Cereal, Deli & Bagel Bar, Beverages, Ice Cream, Waffle Bar, Condiments, all from the "Build Your Own" station) goes in the hall's `allDay` list. If the hours page is down, fall back to the station name and warn. *Alternative:* station name only (breaks if UIUC renames it).
+- 2026-11-19: **How the app will use all-day items:** they're candidates at every meal while the hall is open, mixed in with that meal's hot food. They're often the best protein fillers (salad bar chicken, deli turkey, milk, Greek yogurt). Rules for the recommender: condiments only as add-ons (counted, never the point of a suggestion); cap servings so it never says "eat 4 bowls of cereal"; prefer the meal's hot food when it's close.
 - 2026-11-10: **Parsers are pure functions tested against saved real responses** (`scraper/test/fixtures/`). If UIUC changes a page, they throw `SiteChangedError` instead of silently returning nothing.
 
 ## Problems
 - 2026-11-10: NetNutrition returned a "Start-up Error" page to the scraper. **Why:** its old ASP.NET code crashes without an `Accept-Language` header, and it sets the session cookie on a redirect, which `fetch` drops. **Fix:** always send `Accept-Language`, and follow redirects by hand while keeping cookies (`scraper/src/http.ts`).
 - 2026-11-10: UIUC's menu JSON API (source 1) returns an empty 200 unless the User-Agent looks like a browser. **Why:** it filters out non-browser clients. **Fix:** we don't spoof. NetNutrition has the same menus, so we use it as the only menu source.
-- 2026-11-10: 1 item ("Danish Assorted Alpha 2oz" at LAR) has a nutrition label with no calories. **Why:** missing data on UIUC's side. **Fix:** none needed. The scraper logs it and saves the item with `nutrition: null`.
+- 2026-11-10: A few items (1–3 a day, e.g. "Danish Assorted Alpha 2oz", "Ramen Soup Bar") have a nutrition label with no calories. **Why:** missing data on UIUC's side. **Fix:** saved with `nutrition: null`. On 2026-11-19 these got their own `MissingNutritionError`, so the log no longer says "site format changed?" for them. That warning is now only for real page changes.
 - 2026-11-10: `tsc --noEmit` fails on the fresh Expo template (CSS module and `global.css` types missing, a ref type error in `app-tabs.web.tsx`). **Why:** the CSS typings come from `expo-env.d.ts`, which is only generated on the first `expo start`, and the ref error is an upstream template issue in a web-only file. **Fix:** open. Re-check after the first `expo start`, and the starter screens get replaced with real ones anyway.
