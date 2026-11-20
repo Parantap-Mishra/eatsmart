@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildRows, fromDishRow, toDishRow } from '../src/db.js';
+import { buildRows, fromDishRow, retentionCutoff, toDishRow } from '../src/db.js';
 import type { DayMenu, MenuItem, Nutrition } from '../src/types.js';
 
 const nutrition: Nutrition = {
@@ -45,6 +45,19 @@ describe('buildRows', () => {
 
   it('only saves hours for meals that have them', () => {
     expect(rows.hours).toEqual([{ date: '2026-11-19', hall_id: 'isr', meal: 'Lunch', start_time: '10:30', end_time: '14:00' }]);
+  });
+});
+
+describe('retentionCutoff', () => {
+  it('keeps 7 days including today', () => {
+    expect(retentionCutoff('2026-11-19', 7)).toBe('2026-11-13'); // keeps 13..19, deletes 12 and older
+  });
+  it('crosses month and year boundaries', () => {
+    expect(retentionCutoff('2026-12-03', 7)).toBe('2026-11-27');
+    expect(retentionCutoff('2027-01-02', 7)).toBe('2026-12-27');
+  });
+  it('keepDays = 1 keeps only today', () => {
+    expect(retentionCutoff('2026-11-19', 1)).toBe('2026-11-19');
   });
 });
 

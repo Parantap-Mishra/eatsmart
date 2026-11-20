@@ -11,7 +11,10 @@ import {
   MissingNutritionError, parseChildUnits, parseHours, parseLabel, parseMenuItems, parseMenuList, parsePanels,
   type HoursRow,
 } from './parse.js';
-import { connect, loadKnownNutrition, saveDay } from './db.js';
+import { connect, deleteOldMenus, loadKnownNutrition, saveDay } from './db.js';
+
+/** Daily menus older than this are deleted (food logs, later, are kept forever). */
+const KEEP_MENU_DAYS = 7;
 import { dishKey, splitMeals } from './shape.js';
 import type { DayMenu, HallMenu, MenuItem, Nutrition } from './types.js';
 
@@ -41,6 +44,9 @@ async function main() {
   const db = connect();
   if (db) {
     Object.assign(cache, await loadKnownNutrition(db)); // dishes already in Supabase need no label fetch
+  } else if (process.env.CI) {
+    // On GitHub Actions, missing secrets must fail loudly, not "succeed" with JSON only.
+    throw new Error('SUPABASE_URL / SUPABASE_SECRET_KEY are not set. Add them as GitHub Actions secrets.');
   } else {
     console.log('(No SUPABASE_URL / SUPABASE_SECRET_KEY in scraper/.env: writing JSON only.)');
   }
@@ -108,6 +114,8 @@ async function main() {
   if (db) {
     const saved = await saveDay(db, out);
     console.log(`Saved to Supabase: ${saved.dishes} dishes, ${saved.menuItems} menu items, ${saved.hours} meal hours.`);
+    const cleaned = await deleteOldMenus(db, date, KEEP_MENU_DAYS);
+    console.log(`Cleanup: deleted ${cleaned.deleted} menu/hours rows dated before ${cleaned.cutoff}.`);
   }
 
   const secs = Math.round((Date.now() - started) / 1000);

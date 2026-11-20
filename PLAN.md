@@ -35,7 +35,7 @@
 **What we actually use (2026-11-10):** NetNutrition (source 2) for everything: halls, stations, meals, items, allergen and diet tags, serving sizes and nutrition. The UIUC page (source 1) is used only for the hours table. Source 1's menu API returns an empty response to non-browser clients, and we don't fake a browser (see Decisions). Nutrition labels are cached by item name + serving size, so repeat items cost no requests.
 
 ## Next
-1. Daily GitHub Actions job: run the scraper every morning and save to Supabase. The secret key goes in GitHub Actions secrets.
+1. Daily GitHub Actions job: run the scraper every morning and save to Supabase. The secret key goes in GitHub Actions secrets. The same job deletes `menu_items` and `meal_hours` older than 7 days (see Decisions).
 2. Data quality: flag dishes whose nutrition is for a whole batch, not one serving (e.g. "Flour Tortillas, 460 EA: 50,950 kcal", a whole pizza at 2,970 kcal). The recommender must never suggest these as-is. Ideas: flag `serving_grams` > ~1000 or calories > ~1500 per serving, and maybe scale by count when the serving says "460 EA".
 3. App: browse today's menu by hall.
 4. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
@@ -73,6 +73,12 @@
   - The scraper seeds its cache from `dishes`, so GitHub Actions needs no local cache file.
   - *Alternative:* one big table per day (duplicates nutrition thousands of times).
 - 2026-11-19: **Security model:** RLS is on for every table, with "public read" policies and explicit `grant select` to anon/authenticated. Only the scraper writes, using the secret key (`sb_secret_...`, in `scraper/.env`, gitignored). The app will use the publishable key (`sb_publishable_...`). Project settings: Data API on, "grant API access automatically" off (no table gets exposed by accident), "RLS on new tables automatically" on.
+- 2026-11-19: **Data retention:**
+  - Daily menus (`menu_items`, `meal_hours`) are kept 7 days, then deleted.
+  - Dishes are never deleted, since they're shared across days and future logs point to them.
+  - Users' food logs are kept forever, so people can see how their eating habits changed.
+  - Logs must be self-contained: dish ID + servings + a copy of the calories and macros at the time eaten. They never point at `menu_items`, so deleting old menus can't break history.
+  - *Alternative:* keep 60 days or everything. Storage isn't the issue (~150 KB/day), but nothing needs menus older than a week once logs are self-contained.
 - 2026-11-19: **Migrations are SQL files in `supabase/migrations/`**, pasted into the SQL Editor by hand. *Alternative:* Supabase CLI `db push` (~50 MB install). Revisit when there are many migrations.
 - 2026-11-10: **Parsers are pure functions tested against saved real responses** (`scraper/test/fixtures/`). If UIUC changes a page, they throw `SiteChangedError` instead of silently returning nothing.
 

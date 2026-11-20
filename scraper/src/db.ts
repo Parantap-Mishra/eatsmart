@@ -135,6 +135,25 @@ export async function loadKnownNutrition(db: SupabaseClient): Promise<Record<str
   }
 }
 
+/** Keep `keepDays` days including today: returns the first date to KEEP (older dates get deleted). */
+export function retentionCutoff(today: string, keepDays: number): string {
+  const d = new Date(`${today}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - (keepDays - 1));
+  return d.toISOString().slice(0, 10);
+}
+
+/** Deletes daily menus and hours older than the retention window. Dishes are never deleted. */
+export async function deleteOldMenus(db: SupabaseClient, today: string, keepDays: number) {
+  const cutoff = retentionCutoff(today, keepDays);
+  let deleted = 0;
+  for (const table of ['menu_items', 'meal_hours']) {
+    const { count, error } = await db.from(table).delete({ count: 'exact' }).lt('date', cutoff);
+    if (error) throw new Error(`Supabase: deleting old ${table} failed: ${error.message}`);
+    deleted += count ?? 0;
+  }
+  return { cutoff, deleted };
+}
+
 /** Upserts dishes, then replaces this date's menu and hours (so reruns don't duplicate). */
 export async function saveDay(db: SupabaseClient, day: DayMenu) {
   const { dishes, menu, hours } = buildRows(day);

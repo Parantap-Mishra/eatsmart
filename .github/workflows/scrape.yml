@@ -1,0 +1,42 @@
+# Every night: test the scraper, scrape today's UIUC menus into Supabase,
+# and delete menus older than 7 days. Also runnable by hand from the
+# GitHub "Actions" tab ("Run workflow").
+name: Daily menu scrape
+
+on:
+  schedule:
+    # GitHub cron is UTC. 06:15 UTC = 12:15 AM Champaign in winter (CST),
+    # 1:15 AM in summer (CDT). Always after local midnight, so "today" is right.
+    - cron: '15 6 * * *'
+  workflow_dispatch: {}
+
+# Never run two scrapes at once (e.g. a manual run during the nightly one).
+concurrency:
+  group: daily-scrape
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: scraper
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+      - run: npm ci
+      - name: Test (don't write anything if parsing is broken)
+        run: npm test
+      - name: Scrape today's menus into Supabase
+        run: npm run scrape
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
