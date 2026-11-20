@@ -8,14 +8,17 @@ import { fileURLToPath } from 'node:url';
 import { HALLS, HOURS_PAGE, NETNUTRITION_BASE } from './config.js';
 import { PoliteSession } from './http.js';
 import {
-  MissingNutritionError, normalizeName, parseChildUnits, parseHours, parseLabel, parseMenuItems, parseMenuList, parsePanels,
+  MissingNutritionError, parseChildUnits, parseHours, parseLabel, parseMenuItems, parseMenuList, parsePanels,
   type HoursRow,
 } from './parse.js';
-import { splitMeals } from './shape.js';
+import { connect, loadKnownNutrition, saveDay } from './db.js';
+import { dishKey, splitMeals } from './shape.js';
 import type { DayMenu, HallMenu, MenuItem, Nutrition } from './types.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_FILE = join(ROOT, 'cache', 'nutrition.json');
+const ENV_FILE = join(ROOT, '.env'); // SUPABASE_URL + SUPABASE_SECRET_KEY (never committed)
+if (existsSync(ENV_FILE)) process.loadEnvFile(ENV_FILE);
 
 function todayInChampaign(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
@@ -35,6 +38,12 @@ async function main() {
   const date = todayInChampaign();
   const session = new PoliteSession();
   const cache = loadCache();
+  const db = connect();
+  if (db) {
+    Object.assign(cache, await loadKnownNutrition(db)); // dishes already in Supabase need no label fetch
+  } else {
+    console.log('(No SUPABASE_URL / SUPABASE_SECRET_KEY in scraper/.env: writing JSON only.)');
+  }
   let labelsFetched = 0;
   let labelsCached = 0;
   const nn = (path: string, form: Record<string, number>) =>
@@ -62,7 +71,7 @@ async function main() {
       for (const { meal, menuOid } of menus) {
         const rows = parseMenuItems((await nn('Menu/SelectMenu', { menuOid })).itemPanel ?? '');
         for (const row of rows) {
-          const key = `${normalizeName(row.name)}|${row.servingSize.toLowerCase()}`;
+          const key = dishKey(row.name, row.servingSize);
           let nutrition: Nutrition | null = cache[key] ?? null;
           if (nutrition) labelsCached++;
           else {
@@ -96,6 +105,10 @@ async function main() {
   const out: DayMenu = { date, scrapedAt: new Date().toISOString(), source: NETNUTRITION_BASE, halls };
   const file = join(ROOT, 'output', `menu-${date}.json`);
   saveJson(file, out);
+  if (db) {
+    const saved = await saveDay(db, out);
+    console.log(`Saved to Supabase: ${saved.dishes} dishes, ${saved.menuItems} menu items, ${saved.hours} meal hours.`);
+  }
 
   const secs = Math.round((Date.now() - started) / 1000);
   console.log(`\nDone in ${secs}s, ${session.requestCount} requests. Labels: ${labelsFetched} fetched, ${labelsCached} from cache.`);

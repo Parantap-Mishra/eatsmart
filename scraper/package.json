@@ -9,6 +9,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
     "cheerio": "^1.2.0"
   },
   "devDependencies": {

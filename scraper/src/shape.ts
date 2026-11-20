@@ -1,4 +1,4 @@
-import type { HoursRow } from './parse.js';
+import { normalizeName, type HoursRow } from './parse.js';
 import type { AllDaySection, MealPeriod, MenuItem } from './types.js';
 
 const MEAL_ORDER = ['Breakfast', 'Lunch', 'Light Lunch', 'Dinner'];
@@ -32,6 +32,11 @@ export function splitMeals(menus: Map<string, MenuItem[]>, hallHours: HoursRow[]
 
   meals.sort((a, b) => rank(a.meal) - rank(b.meal));
   return { meals, allDay, usedFallback };
+}
+
+/** One dish = one item at one serving size. Used for the nutrition cache and the dishes table. */
+export function dishKey(name: string, servingSize: string): string {
+  return `${normalizeName(name)}|${servingSize.trim().toLowerCase()}`;
 }
 
 function rank(meal: string) {
