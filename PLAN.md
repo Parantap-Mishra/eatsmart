@@ -16,6 +16,7 @@
 - 2026-11-10: Scraper prototype (`scraper/`). `npm run scrape` writes today's menus for all 4 halls with nutrition to `output/menu-YYYY-MM-DD.json`. First run: 1,136 items, 1,135 with nutrition, 521 requests, ~9 min. Later runs reuse the cache. 16 parser tests.
 - 2026-11-19: Scraper cleanup: each hall now has real `meals` (with hours) plus an `allDay` list (Salad Bar, Cereal, Deli & Bagel Bar...). Live run on 2026-11-19: ~4.5 min, 148 new labels, 951 from cache. 21 tests.
 - 2026-11-19: Supabase set up (free plan, org "EatSmart", project "EatSmart"). Tables from `supabase/migrations/0001_menus.sql` (pasted into the SQL Editor). The scraper now saves each day to Supabase as well as JSON. First save: 4 halls, 418 dishes, 1,094 menu items, 12 meal hours, 2 min (all labels cached). 27 tests.
+- 2026-11-19: Nightly GitHub Actions job (`.github/workflows/scrape.yml`): runs at 06:15 UTC (12:15 AM CST / 1:15 AM CDT) plus a manual "Run workflow" button. Runs tests, scrapes into Supabase, deletes menus older than 7 days. Secrets `SUPABASE_URL` + `SUPABASE_SECRET_KEY` set with `gh secret set -f scraper/.env`. First run: green in 2 min 10 s, 1,090 menu items. 30 tests.
 
 ## UIUC data sources
 **1. Menus + hours: `web.housing.illinois.edu/diningmenus`** (UIUC's own site, JSON API)
@@ -35,18 +36,17 @@
 **What we actually use (2026-11-10):** NetNutrition (source 2) for everything: halls, stations, meals, items, allergen and diet tags, serving sizes and nutrition. The UIUC page (source 1) is used only for the hours table. Source 1's menu API returns an empty response to non-browser clients, and we don't fake a browser (see Decisions). Nutrition labels are cached by item name + serving size, so repeat items cost no requests.
 
 ## Next
-1. Daily GitHub Actions job: run the scraper every morning and save to Supabase. The secret key goes in GitHub Actions secrets. The same job deletes `menu_items` and `meal_hours` older than 7 days (see Decisions).
-2. Data quality: flag dishes whose nutrition is for a whole batch, not one serving (e.g. "Flour Tortillas, 460 EA: 50,950 kcal", a whole pizza at 2,970 kcal). The recommender must never suggest these as-is. Ideas: flag `serving_grams` > ~1000 or calories > ~1500 per serving, and maybe scale by count when the serving says "460 EA".
-3. App: browse today's menu by hall.
-4. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
-5. App: daily recommender, split per meal ("Lunch at ISR: 1.5 servings grilled chicken, 1 cup rice, ~45g protein"). Picks the open hall that best hits the targets. If several are close, show them as options to choose from. Portions in servings, not grams. Respects dietary restrictions. Unit tests.
-6. App: enter meal plan by hand (swipes and dining dollars left), then budget-aware suggestions.
-7. Later: "I'm at this hall no matter what, what do I eat?" mode. The user picks the hall and the app gives the best meal there.
-8. Later: off-plan logging. The user logs what they actually ate when they didn't follow the plan, and it counts toward the day's calories and macros (the remaining meals adjust).
-9. Later: learn real maintenance over time from "I ate this" logs plus weekly weigh-ins, like MacroFactor.
-10. Later: health guardrails (calorie floor, no extreme deficits, no shame-based wording).
-11. Later: pick the final app name, then rename the app, repo and store listing. EatSmart is a placeholder, and UIUC's own nutrition site is already called "EatSmart", so we can't keep it.
-12. Later: legal considerations. It's a health-related app, so think about protection if the advice or data is wrong (e.g. bad nutrition numbers, allergy mistakes). Exactly what to add is still to be decided.
+1. Data quality: flag dishes whose nutrition is for a whole batch, not one serving (e.g. "Flour Tortillas, 460 EA: 50,950 kcal", a whole pizza at 2,970 kcal). The recommender must never suggest these as-is. Ideas: flag `serving_grams` > ~1000 or calories > ~1500 per serving, and maybe scale by count when the serving says "460 EA".
+2. App: browse today's menu by hall.
+3. App: profile onboarding (sex, age, height, weight, activity, optional body fat %, goal + rate, dietary restrictions and allergies), then calorie and macro targets (see Decisions), with unit tests. Let the user override the targets, for example by typing in their own maintenance calories.
+4. App: daily recommender, split per meal ("Lunch at ISR: 1.5 servings grilled chicken, 1 cup rice, ~45g protein"). Picks the open hall that best hits the targets. If several are close, show them as options to choose from. Portions in servings, not grams. Respects dietary restrictions. Unit tests.
+5. App: enter meal plan by hand (swipes and dining dollars left), then budget-aware suggestions.
+6. Later: "I'm at this hall no matter what, what do I eat?" mode. The user picks the hall and the app gives the best meal there.
+7. Later: off-plan logging. The user logs what they actually ate when they didn't follow the plan, and it counts toward the day's calories and macros (the remaining meals adjust).
+8. Later: learn real maintenance over time from "I ate this" logs plus weekly weigh-ins, like MacroFactor.
+9. Later: health guardrails (calorie floor, no extreme deficits, no shame-based wording).
+10. Later: pick the final app name, then rename the app, repo and store listing. EatSmart is a placeholder, and UIUC's own nutrition site is already called "EatSmart", so we can't keep it.
+11. Later: legal considerations. It's a health-related app, so think about protection if the advice or data is wrong (e.g. bad nutrition numbers, allergy mistakes). Exactly what to add is still to be decided.
 
 ## Decisions
 - 2026-11-10: **Expo (React Native + TypeScript)** for the app. One codebase for Android and iOS, I can test on my Android phone with Expo Go, and EAS can build for both stores without a Mac. *Alternatives:* Flutter (would mean learning Dart), native Kotlin and Swift (two codebases).
@@ -79,6 +79,7 @@
   - Users' food logs are kept forever, so people can see how their eating habits changed.
   - Logs must be self-contained: dish ID + servings + a copy of the calories and macros at the time eaten. They never point at `menu_items`, so deleting old menus can't break history.
   - *Alternative:* keep 60 days or everything. Storage isn't the issue (~150 KB/day), but nothing needs menus older than a week once logs are self-contained.
+- 2026-11-19: **Nightly scrape on GitHub Actions** at 06:15 UTC, so it's after local midnight in both CST and CDT and "today" is always right. Tests run first, so broken parsing never writes to the database. It fails loudly if the secrets are missing. Note: GitHub pauses schedules in public repos after 60 days without commits, so re-enable it in the Actions tab if that happens. *Alternatives:* Supabase cron + Edge Function (would mean porting the scraper to Deno), a cron job on my PC (has to be on).
 - 2026-11-19: **Migrations are SQL files in `supabase/migrations/`**, pasted into the SQL Editor by hand. *Alternative:* Supabase CLI `db push` (~50 MB install). Revisit when there are many migrations.
 - 2026-11-10: **Parsers are pure functions tested against saved real responses** (`scraper/test/fixtures/`). If UIUC changes a page, they throw `SiteChangedError` instead of silently returning nothing.
 
